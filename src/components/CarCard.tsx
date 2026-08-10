@@ -24,13 +24,12 @@ export default function CarCard({ car, index = 0 }: { car: CarRow; index?: numbe
       className="glass-card rounded-3xl overflow-hidden group animate-fade-up"
       style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
     >
-      <div className="relative h-56 overflow-hidden">
+      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-bmw-50 to-bmw-100/60">
         <img
           src={images[current]}
           alt={`${car.name} — photo ${current + 1} of ${images.length}`}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-contain p-3 transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-bmw-900/40 to-transparent" />
 
         {images.length > 1 && (
           <>

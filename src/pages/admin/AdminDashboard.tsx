@@ -72,7 +72,7 @@ export default function AdminDashboard() {
           <div key={car.id} className="glass-card rounded-2xl p-4 flex items-center gap-4">
             <div className="w-24 h-16 rounded-xl overflow-hidden bg-bmw-50 flex-shrink-0 flex items-center justify-center">
               {car.images?.[0] ? (
-                <img src={car.images[0]} alt={car.name} className="w-full h-full object-cover" />
+                <img src={car.images[0]} alt={car.name} className="w-full h-full object-contain p-1" />
               ) : (
                 <ImageOff className="w-5 h-5 text-bmw-300" />
               )}
