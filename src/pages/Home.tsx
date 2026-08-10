@@ -34,8 +34,8 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.pexels.com/photos/17888840/pexels-photo-17888840.jpeg?auto=compress&cs=tinysrgb&w=1920"
-            alt="BMW M5 F90"
+            src="/hero-m4.jpg"
+            alt="BMW M4 front view"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/70 via-bmw-800/40 to-transparent" />
