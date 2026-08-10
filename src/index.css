@@ -92,6 +92,19 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  .input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 102, 177, 0.15);
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .input:focus {
+    border-color: #0066b1;
+  }
   .shimmer-bar {
     background: linear-gradient(90deg, transparent, rgba(0, 102, 177, 0.15), transparent);
     background-size: 200% 100%;

@@ -4,23 +4,18 @@ import { Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AdminLogin() {
-  const { user, loading, signIn } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
-  if (!loading && user) {
+  if (isAuthenticated) {
     return <Navigate to="/admin" replace />;
   }
 
-  async function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-    const { error } = await signIn(email, password);
-    setSubmitting(false);
+    const { error } = login(password);
     if (error) {
       setError(error);
     } else {
@@ -35,25 +30,15 @@ export default function AdminLogin() {
           <Lock className="w-6 h-6 text-white" />
         </div>
         <h1 className="font-display font-extrabold text-2xl text-ink mb-1">Admin Login</h1>
-        <p className="text-sm text-ink/60 mb-6">Sign in to manage listings.</p>
+        <p className="text-sm text-ink/60 mb-6">Enter the admin password to manage listings.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-xs font-medium text-ink/60 block mb-1">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-bmw-100 bg-white/70 px-4 py-2.5 text-sm outline-none focus:border-bmw-400"
-              autoComplete="email"
-            />
-          </div>
           <div>
             <label className="text-xs font-medium text-ink/60 block mb-1">Password</label>
             <input
               type="password"
               required
+              autoFocus
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-bmw-100 bg-white/70 px-4 py-2.5 text-sm outline-none focus:border-bmw-400"
@@ -63,8 +48,8 @@ export default function AdminLogin() {
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <button type="submit" disabled={submitting} className="btn-primary w-full justify-center disabled:opacity-60">
-            {submitting ? 'Signing in…' : 'Sign In'}
+          <button type="submit" className="btn-primary w-full justify-center">
+            Sign In
           </button>
         </form>
       </div>

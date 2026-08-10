@@ -7,7 +7,7 @@ export interface Car {
   transmission: string;
   fuel: string;
   engine: string;
-  image: string;
+  images: string[];
   badge?: string;
   specs: string[];
 }
@@ -50,83 +50,8 @@ export interface ProjectCar {
   discount: string;
 }
 
-export const cars: Car[] = [
-  {
-    id: 'm5-f90',
-    name: 'BMW M5 F90 Competition',
-    year: 2022,
-    price: 12500000,
-    mileage: '18,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '4.4L V8 Twin-Turbo',
-    image: 'https://images.pexels.com/photos/17888840/pexels-photo-17888840.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    badge: 'Featured',
-    specs: ['625 HP', '0-100 in 3.3s', 'M xDrive AWD', 'Carbon Ceramic Brakes'],
-  },
-  {
-    id: 'm3-white',
-    name: 'BMW M3 Competition',
-    year: 2021,
-    price: 9800000,
-    mileage: '24,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '3.0L Inline-6 Twin-Turbo',
-    image: 'https://images.pexels.com/photos/7663126/pexels-photo-7663126.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    specs: ['503 HP', '0-100 in 3.5s', 'M xDrive AWD', '8-speed M Steptronic'],
-  },
-  {
-    id: 'm3-black',
-    name: 'BMW M3 CS',
-    year: 2023,
-    price: 14200000,
-    mileage: '8,500 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '3.0L Inline-6 Twin-Turbo',
-    image: 'https://images.pexels.com/photos/29580174/pexels-photo-29580174.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    badge: 'New Arrival',
-    specs: ['530 HP', '0-100 in 3.4s', 'M xDrive AWD', 'Carbon Roof'],
-  },
-  {
-    id: '5-series',
-    name: 'BMW 5 Series 540i',
-    year: 2020,
-    price: 6500000,
-    mileage: '42,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '3.0L Inline-6 Turbo',
-    image: 'https://images.pexels.com/photos/14292717/pexels-photo-14292717.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    specs: ['335 HP', '0-100 in 5.1s', 'Rear-Wheel Drive', 'Luxury Package'],
-  },
-  {
-    id: 'bmw-black',
-    name: 'BMW 740Li',
-    year: 2021,
-    price: 11500000,
-    mileage: '15,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '3.0L Inline-6 Turbo',
-    image: 'https://images.pexels.com/photos/13058788/pexels-photo-13058788.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    badge: 'Executive',
-    specs: ['335 HP', 'Extended Wheelbase', 'Executive Lounge', 'Bowers & Wilkins'],
-  },
-  {
-    id: 'bmw-silver',
-    name: 'BMW 840i Gran Coupe',
-    year: 2022,
-    price: 13800000,
-    mileage: '12,000 km',
-    transmission: 'Automatic',
-    fuel: 'Petrol',
-    engine: '3.0L Inline-6 Turbo',
-    image: 'https://images.pexels.com/photos/10555130/pexels-photo-10555130.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-    specs: ['335 HP', '0-100 in 5.2s', 'xDrive AWD', 'M Sport Package'],
-  },
-];
+// Cars now live in Supabase (see supabase/migrations/001_create_cars_table.sql for the seed data)
+// and are fetched at runtime — src/pages/Home.tsx and src/pages/admin/*.
 
 export const rigs: Rig[] = [
   {

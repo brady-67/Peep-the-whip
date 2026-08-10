@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Car, Truck, Wrench, Hammer, ArrowRight } from 'lucide-react';
+import { supabase, CarRow } from '@/lib/supabase';
+import CarCard from '@/components/CarCard';
 
 const features = [
   { icon: Car, title: 'Buy & Sell', desc: 'Premium BMW and performance cars, hand-picked and inspected.' },
@@ -9,6 +12,22 @@ const features = [
 ];
 
 export default function Home() {
+  const [cars, setCars] = useState<CarRow[]>([]);
+  const [carsLoading, setCarsLoading] = useState(true);
+  const [carsError, setCarsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+      if (error) {
+        setCarsError(error.message);
+      } else {
+        setCars(data ?? []);
+      }
+      setCarsLoading(false);
+    })();
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -104,6 +123,12 @@ export default function Home() {
           </p>
         </div>
 
+        {carsLoading && <p className="text-center text-ink/50">Loading cars…</p>}
+        {carsError && <p className="text-center text-red-600 text-sm">{carsError}</p>}
+        {!carsLoading && !carsError && cars.length === 0 && (
+          <p className="text-center text-ink/50">No cars listed yet — check back soon.</p>
+        )}
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cars.map((car, i) => (
             <CarCard key={car.id} car={car} index={i} />
@@ -132,6 +157,3 @@ export default function Home() {
     </div>
   );
 }
-
-import { cars } from '@/data/inventory';
-import CarCard from '@/components/CarCard';
