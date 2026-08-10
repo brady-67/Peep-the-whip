@@ -1,7 +1,8 @@
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, DragEvent, ChangeEvent } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Plus, X, GripVertical } from 'lucide-react';
+import { ArrowLeft, Plus, X, ChevronLeft, ChevronRight, UploadCloud, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { uploadCarImage } from '@/lib/uploadImage';
 
 const MAX_IMAGES = 10;
 
@@ -27,7 +28,7 @@ const emptyForm: FormState = {
   fuel: 'Petrol',
   engine: '',
   badge: '',
-  images: [''],
+  images: [],
   specs: [''],
 };
 
@@ -59,19 +60,52 @@ export default function AdminCarForm() {
         fuel: data.fuel,
         engine: data.engine,
         badge: data.badge ?? '',
-        images: data.images?.length ? data.images : [''],
+        images: data.images ?? [],
         specs: data.specs?.length ? data.specs : [''],
       });
       setLoading(false);
     })();
   }, [id]);
 
-  function updateImage(index: number, value: string) {
-    setForm((f) => ({ ...f, images: f.images.map((img, i) => (i === index ? value : img)) }));
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+
+  async function handleFiles(files: FileList | File[]) {
+    const list = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    if (list.length === 0) return;
+
+    const room = MAX_IMAGES - form.images.length;
+    if (room <= 0) {
+      setUploadError(`You already have ${MAX_IMAGES} photos — remove one first.`);
+      return;
+    }
+
+    const toUpload = list.slice(0, room);
+    setUploadError(null);
+    setUploading(true);
+
+    for (const file of toUpload) {
+      try {
+        const url = await uploadCarImage(file);
+        setForm((f) => ({ ...f, images: [...f.images, url] }));
+      } catch (err) {
+        setUploadError(err instanceof Error ? err.message : 'Upload failed.');
+      }
+    }
+
+    setUploading(false);
   }
 
-  function addImage() {
-    setForm((f) => (f.images.length >= MAX_IMAGES ? f : { ...f, images: [...f.images, ''] }));
+  function onDrop(e: DragEvent<HTMLLabelElement>) {
+    e.preventDefault();
+    setDragOver(false);
+    handleFiles(e.dataTransfer.files);
+  }
+
+  function onFilePick(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) handleFiles(e.target.files);
+    e.target.value = '';
   }
 
   function removeImage(index: number) {
@@ -104,7 +138,7 @@ export default function AdminCarForm() {
     e.preventDefault();
     setError(null);
 
-    const cleanImages = form.images.map((i) => i.trim()).filter(Boolean).slice(0, MAX_IMAGES);
+    const cleanImages = form.images.slice(0, MAX_IMAGES);
     const cleanSpecs = form.specs.map((s) => s.trim()).filter(Boolean);
 
     if (!form.name.trim()) {
@@ -112,7 +146,7 @@ export default function AdminCarForm() {
       return;
     }
     if (cleanImages.length === 0) {
-      setError('Add at least one image URL.');
+      setError('Add at least one photo.');
       return;
     }
 
@@ -241,57 +275,83 @@ export default function AdminCarForm() {
         </div>
 
         {/* Images */}
-        <div className="glass-card rounded-3xl p-6 space-y-3">
-          <div className="flex items-center justify-between mb-2">
+        <div className="glass-card rounded-3xl p-6 space-y-4">
+          <div className="flex items-center justify-between mb-1">
             <h2 className="font-display font-bold text-ink">
-              Photos <span className="text-ink/40 font-normal text-sm">({form.images.filter(Boolean).length}/{MAX_IMAGES})</span>
+              Photos <span className="text-ink/40 font-normal text-sm">({form.images.length}/{MAX_IMAGES})</span>
             </h2>
           </div>
-          <p className="text-xs text-ink/50 mb-2">Paste image URLs. First photo is the cover shown on the card.</p>
+          <p className="text-xs text-ink/50">Drop photos in, or click to browse. First photo is the cover shown on the card.</p>
 
-          {form.images.map((img, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className="flex flex-col">
-                <button
-                  type="button"
-                  onClick={() => moveImage(i, -1)}
-                  disabled={i === 0}
-                  className="text-ink/30 hover:text-bmw-500 disabled:opacity-20"
-                  aria-label="Move up"
-                >
-                  <GripVertical className="w-4 h-4" />
-                </button>
-              </div>
-              {img && (
-                <img src={img} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-bmw-50" />
-              )}
-              <input
-                value={img}
-                onChange={(e) => updateImage(i, e.target.value)}
-                className="input flex-1"
-                placeholder="https://images.pexels.com/..."
-              />
-              <button
-                type="button"
-                onClick={() => removeImage(i)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-ink/40 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
-                aria-label="Remove image"
-              >
-                <X className="w-4 h-4" />
-              </button>
+          {form.images.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+              {form.images.map((img, i) => (
+                <div key={img} className="relative group rounded-xl overflow-hidden aspect-square bg-bmw-50">
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  {i === 0 && (
+                    <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full bg-bmw-500 text-white text-[10px] font-semibold">
+                      Cover
+                    </span>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveImage(i, -1)}
+                      disabled={i === 0}
+                      className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-ink disabled:opacity-30"
+                      aria-label="Move left"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-red-600"
+                      aria-label="Remove photo"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImage(i, 1)}
+                      disabled={i === form.images.length - 1}
+                      className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-ink disabled:opacity-30"
+                      aria-label="Move right"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
 
           {form.images.length < MAX_IMAGES && (
-            <button
-              type="button"
-              onClick={addImage}
-              className="btn-ghost text-sm flex items-center gap-1.5 mt-2"
+            <label
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+              className={`flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 cursor-pointer transition-colors ${
+                dragOver ? 'border-bmw-500 bg-bmw-50' : 'border-bmw-100 hover:border-bmw-300'
+              }`}
             >
-              <Plus className="w-4 h-4" />
-              Add photo
-            </button>
+              <input type="file" accept="image/*" multiple hidden onChange={onFilePick} disabled={uploading} />
+              {uploading ? (
+                <Loader2 className="w-6 h-6 text-bmw-500 animate-spin" />
+              ) : (
+                <UploadCloud className="w-6 h-6 text-bmw-400" />
+              )}
+              <p className="text-sm text-ink/60">
+                {uploading ? 'Uploading…' : 'Drop photos here or click to browse'}
+              </p>
+              <p className="text-xs text-ink/40">Up to {MAX_IMAGES - form.images.length} more</p>
+            </label>
           )}
+
+          {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
         </div>
 
         {/* Specs */}
