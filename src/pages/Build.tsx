@@ -1,8 +1,25 @@
-import { projectCars } from '@/data/inventory';
+import { useEffect, useState } from 'react';
 import { formatKES } from '@/data/inventory';
+import { supabase, ProjectCarRow } from '@/lib/supabase';
 import { Hammer, Clock, Tag, ArrowRight, CheckCircle, Wrench } from 'lucide-react';
 
 export default function Build() {
+  const [projectCars, setProjectCars] = useState<ProjectCarRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.from('project_cars').select('*').order('created_at', { ascending: false });
+      if (error) {
+        setError(error.message);
+      } else {
+        setProjectCars(data ?? []);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <div className="min-h-screen pt-24">
       {/* Hero */}
@@ -85,6 +102,12 @@ export default function Build() {
           </p>
         </div>
 
+        {loading && <p className="text-center text-ink/50">Loading project cars…</p>}
+        {error && <p className="text-center text-red-600 text-sm">{error}</p>}
+        {!loading && !error && projectCars.length === 0 && (
+          <p className="text-center text-ink/50">No project cars listed yet — check back soon.</p>
+        )}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projectCars.map((car, i) => (
             <div
@@ -94,7 +117,7 @@ export default function Build() {
             >
               <div className="relative h-52 overflow-hidden">
                 <img
-                  src={car.image}
+                  src={car.images?.[0] || '/placeholder-car.svg'}
                   alt={car.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
@@ -116,7 +139,7 @@ export default function Build() {
                 <div className="flex items-center gap-4 mb-4 text-xs text-ink/50">
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-accent-500" />
-                    {car.buildTime}
+                    {car.build_time}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <CheckCircle className="w-3.5 h-3.5 text-green-500" />
@@ -127,11 +150,11 @@ export default function Build() {
                 <div className="space-y-2 pt-3 border-t border-bmw-100">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-ink/40">Car only</span>
-                    <span className="text-sm font-semibold text-ink/60 line-through">{formatKES(car.basePrice)}</span>
+                    <span className="text-sm font-semibold text-ink/60 line-through">{formatKES(car.base_price)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-ink/40">Car + Build (with discount)</span>
-                    <span className="font-display font-extrabold text-lg text-accent-600">{formatKES(car.buildPrice)}</span>
+                    <span className="font-display font-extrabold text-lg text-accent-600">{formatKES(car.build_price)}</span>
                   </div>
                 </div>
 

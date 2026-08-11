@@ -11,10 +11,10 @@ interface FormState {
   name: string;
   year: string;
   price: string;
-  mileage: string;
-  transmission: string;
-  fuel: string;
-  engine: string;
+  terrain: string;
+  drivetrain: string;
+  winch: string;
+  lift: string;
   badge: string;
   images: string[];
   specs: string[];
@@ -24,16 +24,16 @@ const emptyForm: FormState = {
   name: '',
   year: String(new Date().getFullYear()),
   price: '',
-  mileage: '',
-  transmission: 'Automatic',
-  fuel: 'Petrol',
-  engine: '',
+  terrain: '',
+  drivetrain: '4WD',
+  winch: '',
+  lift: '',
   badge: '',
   images: [],
   specs: [''],
 };
 
-export default function AdminCarForm() {
+export default function AdminRigForm() {
   const { id } = useParams();
   const isEditing = Boolean(id);
   const navigate = useNavigate();
@@ -46,9 +46,9 @@ export default function AdminCarForm() {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data, error } = await supabase.from('cars').select('*').eq('id', id).maybeSingle();
+      const { data, error } = await supabase.from('rigs').select('*').eq('id', id).maybeSingle();
       if (error || !data) {
-        setError(error?.message ?? 'Car not found.');
+        setError(error?.message ?? 'Rig not found.');
         setLoading(false);
         return;
       }
@@ -56,10 +56,10 @@ export default function AdminCarForm() {
         name: data.name,
         year: String(data.year),
         price: String(data.price),
-        mileage: data.mileage,
-        transmission: data.transmission,
-        fuel: data.fuel,
-        engine: data.engine,
+        terrain: data.terrain,
+        drivetrain: data.drivetrain,
+        winch: data.winch,
+        lift: data.lift,
         badge: data.badge ?? '',
         images: data.images ?? [],
         specs: data.specs?.length ? data.specs : [''],
@@ -100,10 +100,10 @@ export default function AdminCarForm() {
       name: form.name.trim(),
       year: Number(form.year) || new Date().getFullYear(),
       price: Number(form.price) || 0,
-      mileage: form.mileage.trim(),
-      transmission: form.transmission.trim(),
-      fuel: form.fuel.trim(),
-      engine: form.engine.trim(),
+      terrain: form.terrain.trim(),
+      drivetrain: form.drivetrain.trim(),
+      winch: form.winch.trim(),
+      lift: form.lift.trim(),
       badge: form.badge.trim() || null,
       images: cleanImages,
       specs: cleanSpecs,
@@ -111,15 +111,15 @@ export default function AdminCarForm() {
 
     setSaving(true);
     const { error } = isEditing
-      ? await supabase.from('cars').update(payload).eq('id', id)
-      : await supabase.from('cars').insert(payload);
+      ? await supabase.from('rigs').update(payload).eq('id', id)
+      : await supabase.from('rigs').insert(payload);
     setSaving(false);
 
     if (error) {
       setError(error.message);
       return;
     }
-    navigate('/admin');
+    navigate('/admin/rigs');
   }
 
   if (loading) {
@@ -128,17 +128,16 @@ export default function AdminCarForm() {
 
   return (
     <div className="min-h-screen px-6 pt-28 pb-16 max-w-3xl mx-auto">
-      <Link to="/admin" className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-bmw-700 mb-6">
+      <Link to="/admin/rigs" className="inline-flex items-center gap-1.5 text-sm text-ink/60 hover:text-bmw-700 mb-6">
         <ArrowLeft className="w-4 h-4" />
-        Back to dashboard
+        Back to rigs
       </Link>
 
       <h1 className="font-display font-extrabold text-3xl text-ink mb-8">
-        {isEditing ? 'Edit Car' : 'Add Car'}
+        {isEditing ? 'Edit Rig' : 'Add Rig'}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Basic details */}
         <div className="glass-card rounded-3xl p-6 space-y-4">
           <h2 className="font-display font-bold text-ink mb-2">Details</h2>
 
@@ -148,7 +147,7 @@ export default function AdminCarForm() {
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               className="input"
-              placeholder="BMW M5 F90 Competition"
+              placeholder="Land Rover Defender 110"
             />
           </Field>
 
@@ -169,18 +168,18 @@ export default function AdminCarForm() {
                 value={form.price}
                 onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
                 className="input"
-                placeholder="12500000"
+                placeholder="15500000"
               />
             </Field>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Mileage">
+            <Field label="Terrain">
               <input
-                value={form.mileage}
-                onChange={(e) => setForm((f) => ({ ...f, mileage: e.target.value }))}
+                value={form.terrain}
+                onChange={(e) => setForm((f) => ({ ...f, terrain: e.target.value }))}
                 className="input"
-                placeholder="18,000 km"
+                placeholder="All-Terrain"
               />
             </Field>
             <Field label="Badge (optional)">
@@ -194,33 +193,33 @@ export default function AdminCarForm() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Transmission">
+            <Field label="Drivetrain">
               <input
-                value={form.transmission}
-                onChange={(e) => setForm((f) => ({ ...f, transmission: e.target.value }))}
+                value={form.drivetrain}
+                onChange={(e) => setForm((f) => ({ ...f, drivetrain: e.target.value }))}
                 className="input"
               />
             </Field>
-            <Field label="Fuel">
+            <Field label="Winch">
               <input
-                value={form.fuel}
-                onChange={(e) => setForm((f) => ({ ...f, fuel: e.target.value }))}
+                value={form.winch}
+                onChange={(e) => setForm((f) => ({ ...f, winch: e.target.value }))}
                 className="input"
+                placeholder="Warn Zeon 10-S"
               />
             </Field>
           </div>
 
-          <Field label="Engine">
+          <Field label="Lift">
             <input
-              value={form.engine}
-              onChange={(e) => setForm((f) => ({ ...f, engine: e.target.value }))}
+              value={form.lift}
+              onChange={(e) => setForm((f) => ({ ...f, lift: e.target.value }))}
               className="input"
-              placeholder="4.4L V8 Twin-Turbo"
+              placeholder="2-inch Lift Kit"
             />
           </Field>
         </div>
 
-        {/* Images */}
         <div className="glass-card rounded-3xl p-6">
           <ImageUploader
             images={form.images}
@@ -229,7 +228,6 @@ export default function AdminCarForm() {
           />
         </div>
 
-        {/* Specs */}
         <div className="glass-card rounded-3xl p-6 space-y-3">
           <h2 className="font-display font-bold text-ink mb-2">Spec Highlights</h2>
           {form.specs.map((spec, i) => (
@@ -238,7 +236,7 @@ export default function AdminCarForm() {
                 value={spec}
                 onChange={(e) => updateSpec(i, e.target.value)}
                 className="input flex-1"
-                placeholder="625 HP"
+                placeholder="3.0L V6 Diesel"
               />
               <button
                 type="button"
@@ -260,9 +258,9 @@ export default function AdminCarForm() {
 
         <div className="flex items-center gap-3">
           <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
-            {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Create Car'}
+            {saving ? 'Saving…' : isEditing ? 'Save Changes' : 'Create Rig'}
           </button>
-          <Link to="/admin" className="btn-ghost">
+          <Link to="/admin/rigs" className="btn-ghost">
             Cancel
           </Link>
         </div>

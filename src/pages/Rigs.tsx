@@ -1,8 +1,25 @@
-import { rigs } from '@/data/inventory';
+import { useEffect, useState } from 'react';
 import { formatKES } from '@/data/inventory';
+import { supabase, RigRow } from '@/lib/supabase';
 import { Mountain, Wrench, Anchor, ArrowUp, ArrowRight, Truck } from 'lucide-react';
 
 export default function Rigs() {
+  const [rigs, setRigs] = useState<RigRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase.from('rigs').select('*').order('created_at', { ascending: false });
+      if (error) {
+        setError(error.message);
+      } else {
+        setRigs(data ?? []);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <div className="min-h-screen pt-24">
       {/* Hero */}
@@ -52,6 +69,12 @@ export default function Rigs() {
           </p>
         </div>
 
+        {loading && <p className="text-center text-ink/50">Loading rigs…</p>}
+        {error && <p className="text-center text-red-600 text-sm">{error}</p>}
+        {!loading && !error && rigs.length === 0 && (
+          <p className="text-center text-ink/50">No rigs listed yet — check back soon.</p>
+        )}
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {rigs.map((rig, i) => (
             <div
@@ -61,7 +84,7 @@ export default function Rigs() {
             >
               <div className="relative h-56 overflow-hidden">
                 <img
-                  src={rig.image}
+                  src={rig.images?.[0] || '/placeholder-car.svg'}
                   alt={rig.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />

@@ -23,3 +23,44 @@ export interface CarRow {
   specs: string[];
   created_at?: string;
 }
+
+export interface RigRow {
+  id: string;
+  name: string;
+  year: number;
+  price: number;
+  terrain: string;
+  drivetrain: string;
+  winch: string;
+  lift: string;
+  images: string[];
+  badge: string | null;
+  specs: string[];
+  created_at?: string;
+}
+
+export interface PartRow {
+  id: string;
+  name: string;
+  category: string;
+  brand: string;
+  price: number;
+  stock: 'In Stock' | 'On Order';
+  images: string[];
+  fits: string;
+  created_at?: string;
+}
+
+export interface ProjectCarRow {
+  id: string;
+  name: string;
+  year: number;
+  base_price: number;
+  build_price: number;
+  condition: string;
+  images: string[];
+  description: string;
+  build_time: string;
+  discount: string;
+  created_at?: string;
+}

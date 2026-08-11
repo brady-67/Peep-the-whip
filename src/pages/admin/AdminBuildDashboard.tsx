@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
-import { supabase, CarRow } from '@/lib/supabase';
+import { supabase, ProjectCarRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
 import AdminNav from '@/components/admin/AdminNav';
 
-export default function AdminDashboard() {
-  const [cars, setCars] = useState<CarRow[]>([]);
+export default function AdminBuildDashboard() {
+  const [cars, setCars] = useState<ProjectCarRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export default function AdminDashboard() {
 
   async function loadCars() {
     setLoading(true);
-    const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('project_cars').select('*').order('created_at', { ascending: false });
     if (error) {
       setError(error.message);
     } else {
@@ -27,9 +27,9 @@ export default function AdminDashboard() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this car listing? This cannot be undone.')) return;
+    if (!confirm('Delete this project car? This cannot be undone.')) return;
     setDeletingId(id);
-    const { error } = await supabase.from('cars').delete().eq('id', id);
+    const { error } = await supabase.from('project_cars').delete().eq('id', id);
     setDeletingId(null);
     if (error) {
       alert(`Could not delete: ${error.message}`);
@@ -44,12 +44,12 @@ export default function AdminDashboard() {
 
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display font-extrabold text-3xl text-ink">Manage Cars</h1>
+          <h1 className="font-display font-extrabold text-3xl text-ink">Manage Project Cars</h1>
           <p className="text-sm text-ink/60">{cars.length} listing{cars.length === 1 ? '' : 's'}</p>
         </div>
-        <Link to="/admin/cars/new" className="btn-primary flex items-center gap-2 text-sm">
+        <Link to="/admin/build/new" className="btn-primary flex items-center gap-2 text-sm">
           <Plus className="w-4 h-4" />
-          Add Car
+          Add Project Car
         </Link>
       </div>
 
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
       {!loading && !error && cars.length === 0 && (
         <div className="glass-card rounded-3xl p-10 text-center text-ink/60">
-          No cars yet. Click "Add Car" to create your first listing.
+          No project cars yet. Click "Add Project Car" to create your first listing.
         </div>
       )}
 
@@ -76,13 +76,13 @@ export default function AdminDashboard() {
             <div className="flex-1 min-w-0">
               <h3 className="font-display font-bold text-ink truncate">{car.name}</h3>
               <p className="text-xs text-ink/50">
-                {car.year} · {formatKES(car.price)} · {car.images?.length ?? 0} photo{(car.images?.length ?? 0) === 1 ? '' : 's'}
+                {car.year} · {formatKES(car.build_price)} · {car.discount}
               </p>
             </div>
 
             <div className="flex items-center gap-2 flex-shrink-0">
               <Link
-                to={`/admin/cars/${car.id}`}
+                to={`/admin/build/${car.id}`}
                 className="w-9 h-9 rounded-xl glass flex items-center justify-center text-bmw-700 hover:bg-bmw-50 transition-colors"
                 aria-label="Edit"
               >
