@@ -58,9 +58,9 @@ export default function Home() {
             src="/images/hero-bmw.png"
             alt="Peep The Whip BMW 5 Series"
             className="w-full h-full object-cover"
-            style={{ objectPosition: '75% 45%' }}
+            style={{ objectPosition: '75% 45%', imageRendering: 'auto' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/90 via-bmw-900/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/60 via-bmw-900/20 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-bmw-50 via-transparent to-transparent" />
         </div>
 
