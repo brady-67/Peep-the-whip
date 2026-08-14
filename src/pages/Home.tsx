@@ -55,11 +55,12 @@ export default function Home() {
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.pexels.com/photos/17888840/pexels-photo-17888840.jpeg?auto=compress&cs=tinysrgb&w=1920"
-            alt="BMW M5 F90"
+            src="/images/hero-bmw.png"
+            alt="Peep The Whip BMW 5 Series"
             className="w-full h-full object-cover"
+            style={{ objectPosition: '75% 45%' }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/70 via-bmw-800/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/90 via-bmw-900/50 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-bmw-50 via-transparent to-transparent" />
         </div>
 
