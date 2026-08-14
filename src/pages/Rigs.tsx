@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { formatKES } from '@/data/inventory';
 import { supabase, RigRow } from '@/lib/supabase';
-import { Mountain, Wrench, Anchor, ArrowUp, ArrowRight, Truck } from 'lucide-react';
+import { Mountain, Wrench, ArrowRight, Truck } from 'lucide-react';
 
 export default function Rigs() {
   const [rigs, setRigs] = useState<RigRow[]>([]);
@@ -107,14 +107,6 @@ export default function Rigs() {
                   <div className="flex items-center gap-1.5 text-xs text-ink/60">
                     <Mountain className="w-3.5 h-3.5 text-amber-600" />
                     {rig.drivetrain}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-ink/60">
-                    <ArrowUp className="w-3.5 h-3.5 text-amber-600" />
-                    {rig.lift}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-ink/60">
-                    <Anchor className="w-3.5 h-3.5 text-amber-600" />
-                    {rig.winch}
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-ink/60">
                     <Wrench className="w-3.5 h-3.5 text-amber-600" />

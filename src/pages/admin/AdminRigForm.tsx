@@ -13,8 +13,6 @@ interface FormState {
   price: string;
   terrain: string;
   drivetrain: string;
-  winch: string;
-  lift: string;
   badge: string;
   images: string[];
   specs: string[];
@@ -26,8 +24,6 @@ const emptyForm: FormState = {
   price: '',
   terrain: '',
   drivetrain: '4WD',
-  winch: '',
-  lift: '',
   badge: '',
   images: [],
   specs: [''],
@@ -58,8 +54,6 @@ export default function AdminRigForm() {
         price: String(data.price),
         terrain: data.terrain,
         drivetrain: data.drivetrain,
-        winch: data.winch,
-        lift: data.lift,
         badge: data.badge ?? '',
         images: data.images ?? [],
         specs: data.specs?.length ? data.specs : [''],
@@ -102,8 +96,6 @@ export default function AdminRigForm() {
       price: Number(form.price) || 0,
       terrain: form.terrain.trim(),
       drivetrain: form.drivetrain.trim(),
-      winch: form.winch.trim(),
-      lift: form.lift.trim(),
       badge: form.badge.trim() || null,
       images: cleanImages,
       specs: cleanSpecs,
@@ -192,30 +184,12 @@ export default function AdminRigForm() {
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Drivetrain">
-              <input
-                value={form.drivetrain}
-                onChange={(e) => setForm((f) => ({ ...f, drivetrain: e.target.value }))}
-                className="input"
-              />
-            </Field>
-            <Field label="Winch">
-              <input
-                value={form.winch}
-                onChange={(e) => setForm((f) => ({ ...f, winch: e.target.value }))}
-                className="input"
-                placeholder="Warn Zeon 10-S"
-              />
-            </Field>
-          </div>
-
-          <Field label="Lift">
+          <Field label="Drivetrain">
             <input
-              value={form.lift}
-              onChange={(e) => setForm((f) => ({ ...f, lift: e.target.value }))}
+              value={form.drivetrain}
+              onChange={(e) => setForm((f) => ({ ...f, drivetrain: e.target.value }))}
               className="input"
-              placeholder="2-inch Lift Kit"
+              placeholder="4WD"
             />
           </Field>
         </div>
