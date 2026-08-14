@@ -34,10 +34,11 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
           <div className="relative">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-bmw-500 to-bmw-700 flex items-center justify-center shadow-lg shadow-bmw-500/30 transition-transform group-hover:scale-110">
-              <span className="text-white font-display font-extrabold text-lg">P</span>
-            </div>
-            <div className="absolute inset-0 rounded-full border-2 border-bmw-400/50 animate-pulse-ring" />
+            <img
+              src="/logo.png"
+              alt="Peep The Whip logo"
+              className="w-11 h-11 rounded-full object-cover shadow-lg shadow-bmw-500/30 transition-transform group-hover:scale-110"
+            />
           </div>
           <div className="leading-none">
             <span className="font-display font-extrabold text-lg text-bmw-700 tracking-tight">Peep The Whip</span>

@@ -10,9 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-bmw-400 to-bmw-600 flex items-center justify-center">
-                <span className="text-white font-display font-extrabold text-lg">P</span>
-              </div>
+              <img src="/logo.png" alt="Peep The Whip logo" className="w-10 h-10 rounded-full object-cover" />
               <span className="font-display font-extrabold text-lg text-white">Peep The Whip</span>
             </div>
             <p className="text-white/70 text-sm leading-relaxed">
