@@ -12,6 +12,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export interface CarRow {
   id: string;
   name: string;
+  brand: string;
   year: number;
   price: number;
   mileage: string;
@@ -21,6 +22,7 @@ export interface CarRow {
   images: string[];
   badge: string | null;
   specs: string[];
+  description: string;
   created_at?: string;
 }
 

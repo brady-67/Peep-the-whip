@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Truck, Wrench, Hammer, ArrowRight } from 'lucide-react';
+import { Car, Truck, Wrench, Hammer, ArrowRight, Search } from 'lucide-react';
 import { supabase, CarRow } from '@/lib/supabase';
+import { CAR_BRANDS } from '@/data/carBrands';
 import CarCard from '@/components/CarCard';
 
 const features = [
@@ -15,6 +16,8 @@ export default function Home() {
   const [cars, setCars] = useState<CarRow[]>([]);
   const [carsLoading, setCarsLoading] = useState(true);
   const [carsError, setCarsError] = useState<string | null>(null);
+  const [brandFilter, setBrandFilter] = useState('All');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -27,6 +30,24 @@ export default function Home() {
       setCarsLoading(false);
     })();
   }, []);
+
+  const brandOptions = useMemo(() => {
+    const fromData = Array.from(new Set(cars.map((c) => c.brand).filter(Boolean)));
+    const merged = Array.from(new Set([...CAR_BRANDS.filter((b) => b !== 'Other'), ...fromData]));
+    return ['All', ...merged.sort()];
+  }, [cars]);
+
+  const filteredCars = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return cars.filter((car) => {
+      const matchesBrand = brandFilter === 'All' || car.brand === brandFilter;
+      const matchesSearch =
+        query === '' ||
+        car.name.toLowerCase().includes(query) ||
+        (car.brand ?? '').toLowerCase().includes(query);
+      return matchesBrand && matchesSearch;
+    });
+  }, [cars, brandFilter, search]);
 
   return (
     <div className="min-h-screen">
@@ -123,14 +144,41 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="flex flex-col sm:flex-row gap-3 mb-8 max-w-2xl mx-auto">
+          <select
+            value={brandFilter}
+            onChange={(e) => setBrandFilter(e.target.value)}
+            className="input sm:w-48"
+          >
+            {brandOptions.map((b) => (
+              <option key={b} value={b}>
+                {b === 'All' ? 'All Brands' : b}
+              </option>
+            ))}
+          </select>
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 text-ink/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search any brand or model…"
+              className="input pl-10"
+            />
+          </div>
+        </div>
+
         {carsLoading && <p className="text-center text-ink/50">Loading cars…</p>}
         {carsError && <p className="text-center text-red-600 text-sm">{carsError}</p>}
         {!carsLoading && !carsError && cars.length === 0 && (
           <p className="text-center text-ink/50">No cars listed yet — check back soon.</p>
         )}
+        {!carsLoading && !carsError && cars.length > 0 && filteredCars.length === 0 && (
+          <p className="text-center text-ink/50">No cars match that search — try a different brand or keyword.</p>
+        )}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cars.map((car, i) => (
+          {filteredCars.map((car, i) => (
             <CarCard key={car.id} car={car} index={i} />
           ))}
         </div>

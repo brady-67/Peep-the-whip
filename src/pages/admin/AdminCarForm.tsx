@@ -2,6 +2,7 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { CAR_BRANDS } from '@/data/carBrands';
 import ImageUploader from '@/components/admin/ImageUploader';
 import Field from '@/components/admin/Field';
 
@@ -9,6 +10,8 @@ const MAX_IMAGES = 10;
 
 interface FormState {
   name: string;
+  brand: string;
+  brandOther: string;
   year: string;
   price: string;
   mileage: string;
@@ -18,10 +21,13 @@ interface FormState {
   badge: string;
   images: string[];
   specs: string[];
+  description: string;
 }
 
 const emptyForm: FormState = {
   name: '',
+  brand: 'BMW',
+  brandOther: '',
   year: String(new Date().getFullYear()),
   price: '',
   mileage: '',
@@ -31,6 +37,7 @@ const emptyForm: FormState = {
   badge: '',
   images: [],
   specs: [''],
+  description: '',
 };
 
 export default function AdminCarForm() {
@@ -52,8 +59,11 @@ export default function AdminCarForm() {
         setLoading(false);
         return;
       }
+      const knownBrand = CAR_BRANDS.includes(data.brand) && data.brand !== 'Other';
       setForm({
         name: data.name,
+        brand: knownBrand ? data.brand : 'Other',
+        brandOther: knownBrand ? '' : data.brand ?? '',
         year: String(data.year),
         price: String(data.price),
         mileage: data.mileage,
@@ -63,6 +73,7 @@ export default function AdminCarForm() {
         badge: data.badge ?? '',
         images: data.images ?? [],
         specs: data.specs?.length ? data.specs : [''],
+        description: data.description ?? '',
       });
       setLoading(false);
     })();
@@ -98,6 +109,7 @@ export default function AdminCarForm() {
 
     const payload = {
       name: form.name.trim(),
+      brand: (form.brand === 'Other' ? form.brandOther.trim() : form.brand) || 'Other',
       year: Number(form.year) || new Date().getFullYear(),
       price: Number(form.price) || 0,
       mileage: form.mileage.trim(),
@@ -107,6 +119,7 @@ export default function AdminCarForm() {
       badge: form.badge.trim() || null,
       images: cleanImages,
       specs: cleanSpecs,
+      description: form.description.trim(),
     };
 
     setSaving(true);
@@ -151,6 +164,32 @@ export default function AdminCarForm() {
               placeholder="BMW M5 F90 Competition"
             />
           </Field>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Brand">
+              <select
+                value={form.brand}
+                onChange={(e) => setForm((f) => ({ ...f, brand: e.target.value }))}
+                className="input"
+              >
+                {CAR_BRANDS.map((b) => (
+                  <option key={b} value={b}>
+                    {b}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            {form.brand === 'Other' && (
+              <Field label="Brand Name">
+                <input
+                  value={form.brandOther}
+                  onChange={(e) => setForm((f) => ({ ...f, brandOther: e.target.value }))}
+                  className="input"
+                  placeholder="e.g. Subaru"
+                />
+              </Field>
+            )}
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Year">
@@ -216,6 +255,15 @@ export default function AdminCarForm() {
               onChange={(e) => setForm((f) => ({ ...f, engine: e.target.value }))}
               className="input"
               placeholder="4.4L V8 Twin-Turbo"
+            />
+          </Field>
+
+          <Field label="Description (optional — shown on the car's full page)">
+            <textarea
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              className="input min-h-[100px] resize-y"
+              placeholder="Well-maintained, single owner, full service history..."
             />
           </Field>
         </div>

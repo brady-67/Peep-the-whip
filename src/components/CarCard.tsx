@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { CarRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
+import { buildEnquiryLink } from '@/lib/enquiry';
 import { Gauge, Fuel, Settings, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function CarCard({ car, index = 0 }: { car: CarRow; index?: number }) {
@@ -19,9 +21,16 @@ export default function CarCard({ car, index = 0 }: { car: CarRow; index?: numbe
     setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
   }
 
+  function onEnquireClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(buildEnquiryLink(car.name, formatKES(car.price)), '_blank', 'noopener,noreferrer');
+  }
+
   return (
-    <div
-      className="glass-card rounded-3xl overflow-hidden group animate-fade-up"
+    <Link
+      to={`/cars/${car.id}`}
+      className="glass-card rounded-3xl overflow-hidden group animate-fade-up block"
       style={{ animationDelay: `${index * 0.1}s`, opacity: 0 }}
     >
       <div className="relative h-56 overflow-hidden">
@@ -72,7 +81,10 @@ export default function CarCard({ car, index = 0 }: { car: CarRow; index?: numbe
       </div>
 
       <div className="p-5">
-        <h3 className="font-display font-bold text-lg text-ink mb-1">{car.name}</h3>
+        {car.brand && (
+          <span className="text-xs text-bmw-500 font-semibold uppercase tracking-wide">{car.brand}</span>
+        )}
+        <h3 className="font-display font-bold text-lg text-ink mb-1 mt-0.5">{car.name}</h3>
         <p className="text-sm text-ink/50 mb-3">{car.engine}</p>
 
         <div className="grid grid-cols-3 gap-2 mb-4">
@@ -103,12 +115,12 @@ export default function CarCard({ car, index = 0 }: { car: CarRow; index?: numbe
             <span className="text-xs text-ink/40 block">Price</span>
             <span className="font-display font-extrabold text-xl text-bmw-700">{formatKES(car.price)}</span>
           </div>
-          <button className="btn-primary text-sm flex items-center gap-1.5">
+          <button onClick={onEnquireClick} className="btn-primary text-sm flex items-center gap-1.5">
             Enquire
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

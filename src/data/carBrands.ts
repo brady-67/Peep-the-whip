@@ -1,0 +1,17 @@
+export const CAR_BRANDS = [
+  'BMW',
+  'Mercedes-Benz',
+  'Audi',
+  'Porsche',
+  'Volkswagen',
+  'Toyota',
+  'Land Rover',
+  'Range Rover',
+  'Nissan',
+  'Mazda',
+  'Honda',
+  'Ford',
+  'Volvo',
+  'Lexus',
+  'Other',
+];

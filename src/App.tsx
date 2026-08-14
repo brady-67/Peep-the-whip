@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BlobBackground from '@/components/BlobBackground';
 import Home from '@/pages/Home';
+import CarDetail from '@/pages/CarDetail';
 import Rigs from '@/pages/Rigs';
 import Parts from '@/pages/Parts';
 import Build from '@/pages/Build';
@@ -27,6 +28,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/cars/:id" element={<CarDetail />} />
           <Route path="/rigs" element={<Rigs />} />
           <Route path="/parts" element={<Parts />} />
           <Route path="/build" element={<Build />} />
