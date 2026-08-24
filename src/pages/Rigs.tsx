@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { formatKES } from '@/data/inventory';
 import { supabase, RigRow } from '@/lib/supabase';
-import { Mountain, Wrench, ArrowRight, Truck } from 'lucide-react';
+import { ArrowRight, Truck } from 'lucide-react';
+import RigCard from '@/components/RigCard';
 
 export default function Rigs() {
   const [rigs, setRigs] = useState<RigRow[]>([]);
@@ -77,63 +77,7 @@ export default function Rigs() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {rigs.map((rig, i) => (
-            <div
-              key={rig.id}
-              className="glass-card rounded-3xl overflow-hidden group animate-fade-up"
-              style={{ animationDelay: `${i * 0.1}s`, opacity: 0 }}
-            >
-              <div className="relative h-56 overflow-hidden">
-                <img
-                  src={rig.images?.[0] || '/placeholder-car.svg'}
-                  alt={rig.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-amber-900/30 to-transparent" />
-                {rig.badge && (
-                  <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-lg">
-                    {rig.badge}
-                  </span>
-                )}
-                <span className="absolute top-4 right-4 px-3 py-1 rounded-full glass text-amber-700 text-xs font-bold">
-                  {rig.year}
-                </span>
-              </div>
-
-              <div className="p-5">
-                <h3 className="font-display font-bold text-lg text-ink mb-1">{rig.name}</h3>
-                <p className="text-sm text-ink/50 mb-3">{rig.terrain}</p>
-
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="flex items-center gap-1.5 text-xs text-ink/60">
-                    <Mountain className="w-3.5 h-3.5 text-amber-600" />
-                    {rig.drivetrain}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-ink/60">
-                    <Wrench className="w-3.5 h-3.5 text-amber-600" />
-                    Trail Ready
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {rig.specs.map((spec) => (
-                    <span key={spec} className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[11px] font-medium">
-                      {spec}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-amber-100">
-                  <div>
-                    <span className="text-xs text-ink/40 block">Price</span>
-                    <span className="font-display font-extrabold text-xl text-amber-700">{formatKES(rig.price)}</span>
-                  </div>
-                  <button className="btn-primary text-sm flex items-center gap-1.5">
-                    Enquire
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <RigCard key={rig.id} rig={rig} index={i} />
           ))}
         </div>
       </section>
