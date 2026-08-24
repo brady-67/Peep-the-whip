@@ -4,6 +4,7 @@ import { supabase, RigRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
 import { buildEnquiryLink } from '@/lib/enquiry';
 import { ArrowLeft, ChevronLeft, ChevronRight, Mountain, Wrench, ArrowRight } from 'lucide-react';
+import SoldRibbon from '@/components/SoldRibbon';
 
 export default function RigDetail() {
   const { id } = useParams();
@@ -60,10 +61,14 @@ export default function RigDetail() {
               alt={`${rig.name} — photo ${current + 1} of ${images.length}`}
               className="w-full h-full object-cover"
             />
-            {rig.badge && (
-              <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-lg">
-                {rig.badge}
-              </span>
+            {rig.badge?.toLowerCase() === 'sold' ? (
+              <SoldRibbon />
+            ) : (
+              rig.badge && (
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-lg">
+                  {rig.badge}
+                </span>
+              )
             )}
             {images.length > 1 && (
               <>
