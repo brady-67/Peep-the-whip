@@ -4,6 +4,7 @@ import { CarRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
 import { buildEnquiryLink } from '@/lib/enquiry';
 import { Gauge, Fuel, Settings, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import SoldRibbon from '@/components/SoldRibbon';
 
 export default function CarCard({ car, index = 0 }: { car: CarRow; index?: number }) {
   const images = car.images?.length > 0 ? car.images : ['/placeholder-car.svg'];
@@ -70,10 +71,14 @@ export default function CarCard({ car, index = 0 }: { car: CarRow; index?: numbe
           </>
         )}
 
-        {car.badge && (
-          <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-bmw-500 text-white text-xs font-semibold shadow-lg">
-            {car.badge}
-          </span>
+        {car.badge?.toLowerCase() === 'sold' ? (
+          <SoldRibbon />
+        ) : (
+          car.badge && (
+            <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-bmw-500 text-white text-xs font-semibold shadow-lg">
+              {car.badge}
+            </span>
+          )
         )}
         <span className="absolute top-4 right-4 px-3 py-1 rounded-full glass text-bmw-700 text-xs font-bold">
           {car.year}
