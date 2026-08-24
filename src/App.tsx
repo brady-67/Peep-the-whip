@@ -5,6 +5,7 @@ import BlobBackground from '@/components/BlobBackground';
 import Home from '@/pages/Home';
 import CarDetail from '@/pages/CarDetail';
 import Rigs from '@/pages/Rigs';
+import RigDetail from '@/pages/RigDetail';
 import Parts from '@/pages/Parts';
 import Build from '@/pages/Build';
 import About from '@/pages/About';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/cars/:id" element={<CarDetail />} />
           <Route path="/rigs" element={<Rigs />} />
+          <Route path="/rigs/:id" element={<RigDetail />} />
           <Route path="/parts" element={<Parts />} />
           <Route path="/build" element={<Build />} />
           <Route path="/about" element={<About />} />
