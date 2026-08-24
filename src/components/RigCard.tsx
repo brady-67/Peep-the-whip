@@ -4,6 +4,7 @@ import { RigRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
 import { buildEnquiryLink } from '@/lib/enquiry';
 import { Mountain, Wrench, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import SoldRibbon from '@/components/SoldRibbon';
 
 export default function RigCard({ rig, index = 0 }: { rig: RigRow; index?: number }) {
   const images = rig.images?.length > 0 ? rig.images : ['/placeholder-car.svg'];
@@ -70,10 +71,14 @@ export default function RigCard({ rig, index = 0 }: { rig: RigRow; index?: numbe
           </>
         )}
 
-        {rig.badge && (
-          <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-lg">
-            {rig.badge}
-          </span>
+        {rig.badge?.toLowerCase() === 'sold' ? (
+          <SoldRibbon />
+        ) : (
+          rig.badge && (
+            <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-amber-600 text-white text-xs font-semibold shadow-lg">
+              {rig.badge}
+            </span>
+          )
         )}
         <span className="absolute top-4 right-4 px-3 py-1 rounded-full glass text-amber-700 text-xs font-bold">
           {rig.year}
