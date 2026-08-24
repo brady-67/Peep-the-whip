@@ -4,6 +4,7 @@ import { supabase, CarRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
 import { buildEnquiryLink } from '@/lib/enquiry';
 import { ArrowLeft, ChevronLeft, ChevronRight, Gauge, Fuel, Settings, Wrench, ArrowRight } from 'lucide-react';
+import SoldRibbon from '@/components/SoldRibbon';
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -60,10 +61,14 @@ export default function CarDetail() {
               alt={`${car.name} — photo ${current + 1} of ${images.length}`}
               className="w-full h-full object-cover"
             />
-            {car.badge && (
-              <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-bmw-500 text-white text-xs font-semibold shadow-lg">
-                {car.badge}
-              </span>
+            {car.badge?.toLowerCase() === 'sold' ? (
+              <SoldRibbon />
+            ) : (
+              car.badge && (
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full bg-bmw-500 text-white text-xs font-semibold shadow-lg">
+                  {car.badge}
+                </span>
+              )
             )}
             {images.length > 1 && (
               <>
