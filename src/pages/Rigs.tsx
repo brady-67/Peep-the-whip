@@ -10,7 +10,7 @@ export default function Rigs() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase.from('rigs').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('rigs').select('*').order('sort_order', { ascending: true });
       if (error) {
         setError(error.message);
       } else {
