@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImageOff, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase, PartRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
+import { reorderItem } from '@/lib/reorder';
 import AdminNav from '@/components/admin/AdminNav';
 
 export default function AdminPartsDashboard() {
@@ -10,6 +11,7 @@ export default function AdminPartsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadParts();
@@ -17,13 +19,20 @@ export default function AdminPartsDashboard() {
 
   async function loadParts() {
     setLoading(true);
-    const { data, error } = await supabase.from('parts').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('parts').select('*').order('sort_order', { ascending: true });
     if (error) {
       setError(error.message);
     } else {
       setParts(data ?? []);
     }
     setLoading(false);
+  }
+
+  async function handleMove(index: number, direction: -1 | 1) {
+    setReorderingId(parts[index].id);
+    const next = await reorderItem('parts', parts, index, direction);
+    setParts(next);
+    setReorderingId(null);
   }
 
   async function handleDelete(id: string) {
@@ -63,8 +72,27 @@ export default function AdminPartsDashboard() {
       )}
 
       <div className="grid gap-4">
-        {parts.map((part) => (
+        {parts.map((part, i) => (
           <div key={part.id} className="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div className="flex flex-col gap-1 flex-shrink-0">
+              <button
+                onClick={() => handleMove(i, -1)}
+                disabled={i === 0 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move up"
+              >
+                <ArrowUp className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleMove(i, 1)}
+                disabled={i === parts.length - 1 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move down"
+              >
+                <ArrowDown className="w-4 h-4" />
+              </button>
+            </div>
+
             <div className="w-24 h-16 rounded-xl overflow-hidden bg-bmw-50 flex-shrink-0 flex items-center justify-center">
               {part.images?.[0] ? (
                 <img src={part.images[0]} alt={part.name} className="w-full h-full object-cover" />
