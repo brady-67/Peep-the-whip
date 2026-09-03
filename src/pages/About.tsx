@@ -99,7 +99,7 @@ export default function About() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-ink text-sm">Phone</h4>
-                    <a href="tel:0722507773" className="text-ink/60 text-sm hover:text-bmw-600 transition-colors">0722 507773</a>
+                    <a href="tel:0700206558" className="text-ink/60 text-sm hover:text-bmw-600 transition-colors">0700 206558</a>
                   </div>
                 </div>
 
@@ -109,7 +109,7 @@ export default function About() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-ink text-sm">Email</h4>
-                    <p className="text-ink/60 text-sm">info@peepthewhip.co.ke</p>
+                    <p className="text-ink/60 text-sm">peepthewhipcars@gmail.com</p>
                   </div>
                 </div>
 
@@ -126,7 +126,7 @@ export default function About() {
               </div>
 
               <div className="flex gap-3 mt-8">
-                <a href="tel:0722507773" className="btn-primary text-sm flex items-center gap-2">
+                <a href="tel:0700206558" className="btn-primary text-sm flex items-center gap-2">
                   <Phone className="w-4 h-4" />
                   Call Now
                 </a>
