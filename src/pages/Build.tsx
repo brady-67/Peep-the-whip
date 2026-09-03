@@ -177,8 +177,8 @@ export default function Build() {
           <p className="text-ink/60 mb-8 max-w-xl mx-auto">
             Bring it to us. We'll assess it, plan the build, and bring it back to life — all at a discounted rate when you commit to the full build with us.
           </p>
-          <a href="tel:0722507773" className="btn-primary inline-flex items-center gap-2 text-base">
-            Call 0722 507773
+          <a href="tel:0700206558" className="btn-primary inline-flex items-center gap-2 text-base">
+            Call 0700 206558
             <ArrowRight className="w-5 h-5" />
           </a>
         </div>
