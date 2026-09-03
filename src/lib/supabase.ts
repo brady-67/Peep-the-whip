@@ -23,6 +23,7 @@ export interface CarRow {
   badge: string | null;
   specs: string[];
   description: string;
+  sort_order: number;
   created_at?: string;
 }
 
@@ -38,6 +39,7 @@ export interface RigRow {
   images: string[];
   badge: string | null;
   specs: string[];
+  sort_order: number;
   created_at?: string;
 }
 
@@ -50,6 +52,7 @@ export interface PartRow {
   stock: 'In Stock' | 'On Order';
   images: string[];
   fits: string;
+  sort_order: number;
   created_at?: string;
 }
 
@@ -64,5 +67,6 @@ export interface ProjectCarRow {
   description: string;
   build_time: string;
   discount: string;
+  sort_order: number;
   created_at?: string;
 }
