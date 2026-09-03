@@ -10,6 +10,7 @@ interface ImageUploaderProps {
 
 export default function ImageUploader({ images, onChange, max = 10 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -26,17 +27,28 @@ export default function ImageUploader({ images, onChange, max = 10 }: ImageUploa
     const toUpload = list.slice(0, room);
     setUploadError(null);
     setUploading(true);
+    setProgress({ done: 0, total: toUpload.length });
 
-    let current = images;
-    for (const file of toUpload) {
-      try {
-        const url = await uploadCarImage(file);
-        current = [...current, url];
-        onChange(current);
-      } catch (err) {
-        setUploadError(err instanceof Error ? err.message : 'Upload failed.');
-      }
-    }
+    // Uploaded in parallel — each photo is resized/compressed client-side
+    // first, so this stays fast even for a full batch straight off a phone.
+    const results = await Promise.all(
+      toUpload.map((file) =>
+        uploadCarImage(file)
+          .then((url) => {
+            setProgress((p) => ({ ...p, done: p.done + 1 }));
+            return { url, error: null as string | null };
+          })
+          .catch((err) => {
+            setProgress((p) => ({ ...p, done: p.done + 1 }));
+            return { url: null as string | null, error: err instanceof Error ? err.message : 'Upload failed.' };
+          })
+      )
+    );
+
+    const newUrls = results.filter((r) => r.url).map((r) => r.url as string);
+    const firstError = results.find((r) => r.error)?.error;
+    if (firstError) setUploadError(firstError);
+    if (newUrls.length > 0) onChange([...images, ...newUrls]);
 
     setUploading(false);
   }
@@ -71,7 +83,9 @@ export default function ImageUploader({ images, onChange, max = 10 }: ImageUploa
           Photos <span className="text-ink/40 font-normal text-sm">({images.length}/{max})</span>
         </h2>
       </div>
-      <p className="text-xs text-ink/50">Drop photos in, or click to browse. First photo is the cover shown on the card.</p>
+      <p className="text-xs text-ink/50">
+        Drop photos in, or click to browse — upload full, uncropped photos straight from your phone, they're auto-resized and displayed cropped to fit. First photo is the cover shown on the card.
+      </p>
 
       {images.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
@@ -134,7 +148,9 @@ export default function ImageUploader({ images, onChange, max = 10 }: ImageUploa
           ) : (
             <UploadCloud className="w-6 h-6 text-bmw-400" />
           )}
-          <p className="text-sm text-ink/60">{uploading ? 'Uploading…' : 'Drop photos here or click to browse'}</p>
+          <p className="text-sm text-ink/60">
+            {uploading ? `Uploading ${progress.done}/${progress.total}…` : 'Drop photos here or click to browse'}
+          </p>
           <p className="text-xs text-ink/40">Up to {max - images.length} more</p>
         </label>
       )}
