@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImageOff, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase, RigRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
+import { reorderItem } from '@/lib/reorder';
 import AdminNav from '@/components/admin/AdminNav';
 
 export default function AdminRigsDashboard() {
@@ -10,6 +11,7 @@ export default function AdminRigsDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadRigs();
@@ -17,13 +19,20 @@ export default function AdminRigsDashboard() {
 
   async function loadRigs() {
     setLoading(true);
-    const { data, error } = await supabase.from('rigs').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('rigs').select('*').order('sort_order', { ascending: true });
     if (error) {
       setError(error.message);
     } else {
       setRigs(data ?? []);
     }
     setLoading(false);
+  }
+
+  async function handleMove(index: number, direction: -1 | 1) {
+    setReorderingId(rigs[index].id);
+    const next = await reorderItem('rigs', rigs, index, direction);
+    setRigs(next);
+    setReorderingId(null);
   }
 
   async function handleDelete(id: string) {
@@ -63,8 +72,27 @@ export default function AdminRigsDashboard() {
       )}
 
       <div className="grid gap-4">
-        {rigs.map((rig) => (
+        {rigs.map((rig, i) => (
           <div key={rig.id} className="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div className="flex flex-col gap-1 flex-shrink-0">
+              <button
+                onClick={() => handleMove(i, -1)}
+                disabled={i === 0 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move up"
+              >
+                <ArrowUp className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleMove(i, 1)}
+                disabled={i === rigs.length - 1 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move down"
+              >
+                <ArrowDown className="w-4 h-4" />
+              </button>
+            </div>
+
             <div className="w-24 h-16 rounded-xl overflow-hidden bg-bmw-50 flex-shrink-0 flex items-center justify-center">
               {rig.images?.[0] ? (
                 <img src={rig.images[0]} alt={rig.name} className="w-full h-full object-cover" />
