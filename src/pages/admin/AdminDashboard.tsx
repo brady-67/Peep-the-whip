@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImageOff, ArrowUp, ArrowDown } from 'lucide-react';
 import { supabase, CarRow } from '@/lib/supabase';
 import { formatKES } from '@/data/inventory';
+import { reorderItem } from '@/lib/reorder';
 import AdminNav from '@/components/admin/AdminNav';
 
 export default function AdminDashboard() {
@@ -10,6 +11,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   useEffect(() => {
     loadCars();
@@ -17,13 +19,20 @@ export default function AdminDashboard() {
 
   async function loadCars() {
     setLoading(true);
-    const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('cars').select('*').order('sort_order', { ascending: true });
     if (error) {
       setError(error.message);
     } else {
       setCars(data ?? []);
     }
     setLoading(false);
+  }
+
+  async function handleMove(index: number, direction: -1 | 1) {
+    setReorderingId(cars[index].id);
+    const next = await reorderItem('cars', cars, index, direction);
+    setCars(next);
+    setReorderingId(null);
   }
 
   async function handleDelete(id: string) {
@@ -63,8 +72,27 @@ export default function AdminDashboard() {
       )}
 
       <div className="grid gap-4">
-        {cars.map((car) => (
+        {cars.map((car, i) => (
           <div key={car.id} className="glass-card rounded-2xl p-4 flex items-center gap-4">
+            <div className="flex flex-col gap-1 flex-shrink-0">
+              <button
+                onClick={() => handleMove(i, -1)}
+                disabled={i === 0 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move up"
+              >
+                <ArrowUp className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => handleMove(i, 1)}
+                disabled={i === cars.length - 1 || reorderingId !== null}
+                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-ink/60 hover:text-bmw-700 disabled:opacity-30 transition-colors"
+                aria-label="Move down"
+              >
+                <ArrowDown className="w-4 h-4" />
+              </button>
+            </div>
+
             <div className="w-24 h-16 rounded-xl overflow-hidden bg-bmw-50 flex-shrink-0 flex items-center justify-center">
               {car.images?.[0] ? (
                 <img src={car.images[0]} alt={car.name} className="w-full h-full object-cover" />
