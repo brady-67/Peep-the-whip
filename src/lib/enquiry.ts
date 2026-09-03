@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = '254722507773'; // 0722 507773 in international format
+const WHATSAPP_NUMBER = '254700206558'; // 0700 206558 in international format
 
 export function buildEnquiryLink(itemName: string, price?: string): string {
   const message = price
