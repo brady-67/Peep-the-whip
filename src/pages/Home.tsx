@@ -21,7 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('cars').select('*').order('sort_order', { ascending: true });
       if (error) {
         setCarsError(error.message);
       } else {
@@ -52,13 +52,12 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      <section className="relative min-h-dvh flex items-center pt-20 overflow-hidden">
         <div className="absolute inset-0">
           <img
             src="/images/hero-bmw.png"
             alt="Peep The Whip BMW 5 Series"
-            className="w-full h-full object-cover"
-            style={{ objectPosition: '75% 45%' }}
+            className="w-full h-full object-cover object-[65%_center] md:object-[75%_45%]"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-bmw-900/90 via-bmw-900/50 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-bmw-50 via-transparent to-transparent" />
@@ -88,7 +87,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="flex items-center gap-6 mt-10 animate-fade-up" style={{ animationDelay: '0.4s', opacity: 0 }}>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-10 animate-fade-up" style={{ animationDelay: '0.4s', opacity: 0 }}>
               <div>
                 <div className="flex items-center gap-1">
                   <span className="text-3xl font-display font-extrabold text-white">4.4</span>
