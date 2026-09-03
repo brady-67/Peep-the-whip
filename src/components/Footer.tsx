@@ -59,11 +59,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-bmw-300 shrink-0" />
-                0722 507773
+                0700 206558
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-bmw-300 shrink-0" />
-                info@peepthewhip.co.ke
+                peepthewhipcars@gmail.com
               </li>
               <li className="flex items-start gap-2">
                 <Clock className="w-4 h-4 mt-0.5 text-bmw-300 shrink-0" />
