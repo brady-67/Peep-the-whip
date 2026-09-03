@@ -123,9 +123,19 @@ export default function AdminCarForm() {
     };
 
     setSaving(true);
+    let sortOrderPatch = {};
+    if (!isEditing) {
+      const { data: maxRow } = await supabase
+        .from('cars')
+        .select('sort_order')
+        .order('sort_order', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      sortOrderPatch = { sort_order: (maxRow?.sort_order ?? -1) + 1 };
+    }
     const { error } = isEditing
       ? await supabase.from('cars').update(payload).eq('id', id)
-      : await supabase.from('cars').insert(payload);
+      : await supabase.from('cars').insert({ ...payload, ...sortOrderPatch });
     setSaving(false);
 
     if (error) {
@@ -318,3 +328,4 @@ export default function AdminCarForm() {
     </div>
   );
 }
+
