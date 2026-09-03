@@ -93,9 +93,19 @@ export default function AdminBuildForm() {
     };
 
     setSaving(true);
+    let sortOrderPatch = {};
+    if (!isEditing) {
+      const { data: maxRow } = await supabase
+        .from('project_cars')
+        .select('sort_order')
+        .order('sort_order', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      sortOrderPatch = { sort_order: (maxRow?.sort_order ?? -1) + 1 };
+    }
     const { error } = isEditing
       ? await supabase.from('project_cars').update(payload).eq('id', id)
-      : await supabase.from('project_cars').insert(payload);
+      : await supabase.from('project_cars').insert({ ...payload, ...sortOrderPatch });
     setSaving(false);
 
     if (error) {
