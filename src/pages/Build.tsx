@@ -10,7 +10,7 @@ export default function Build() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase.from('project_cars').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('project_cars').select('*').order('sort_order', { ascending: true });
       if (error) {
         setError(error.message);
       } else {
